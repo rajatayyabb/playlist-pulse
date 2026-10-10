@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YTPULSE // Playlist Extractor</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="scanlines"></div>
+<div class="grid-bg"></div>
+
+<div class="wrap">
+  <header>
+    <h1><span class="bracket">[</span>YTPULSE<span class="bracket">]</span></h1>
+    <p class="sub">// local playlist extraction unit :: 720p :: zipped output</p>
+  </header>
+
+  <div class="panel">
+    <div class="panel-head">
+      <span class="dot"></span> TARGET INPUT
+    </div>
+    <input id="url" type="text" placeholder="paste youtube playlist url...">
+
+    <div class="row">
+      <label class="radio">
+        <input type="radio" name="fmt" value="mp4" checked>
+        <span>MP4</span>
+      </label>
+      <label class="radio">
+        <input type="radio" name="fmt" value="mkv">
+        <span>MKV (no re-encode)</span>
+      </label>
+    </div>
+
+    <button id="go" onclick="start()">► INITIATE DOWNLOAD</button>
+  </div>
+
+  <div class="panel" id="status-panel" style="display:none">
+    <div class="panel-head"><span class="dot pulse"></span> SIGNAL LOG</div>
+    <div class="bar-wrap"><div class="bar" id="bar"></div></div>
+    <div class="percent" id="percent">0%</div>
+    <pre id="log"></pre>
+    <a id="dl" class="dl-btn" style="display:none">⬇ DOWNLOAD ARCHIVE (.zip)</a>
+  </div>
+
+  <footer>runs 100% locally on your machine · no data leaves your network</footer>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
