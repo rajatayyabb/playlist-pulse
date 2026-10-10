@@ -1,129 +1,200 @@
 # YTPULSE
 
-> **A local-first playlist extraction console for creators, archivists, and power users.**
+> A local-first web interface for downloading permitted YouTube playlists as numbered MP4 or MKV files packed into one ZIP archive.
 
-[![Status: local-only](https://img.shields.io/badge/status-local--only-00ff9c?style=for-the-badge)](#privacy)
 [![Python](https://img.shields.io/badge/python-3.9%2B-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/flask-web%20app-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-f5c518?style=for-the-badge)](#license)
+[![Flask](https://img.shields.io/badge/flask-web%20application-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![yt-dlp](https://img.shields.io/badge/powered%20by-yt--dlp-ff0033?style=for-the-badge)](https://github.com/yt-dlp/yt-dlp)
+[![License: MIT](https://img.shields.io/badge/license-MIT-f5c518?style=for-the-badge)](LICENSE)
 
-YTPULSE is a deliberately simple web UI around [`yt-dlp`](https://github.com/yt-dlp/yt-dlp). Paste a YouTube playlist URL, choose an output container, watch the live signal log, and download one numbered ZIP archive when the job is complete.
+YTPULSE wraps [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) in a simple neon terminal-style Flask interface. Users paste a playlist URL, choose an output format, monitor progress in the browser, and download a single ZIP archive when processing is complete.
 
-No accounts. No dashboard. No cloud queue. **Just a small local tool that runs on your machine.**
+## Choose how you want to use it
 
----
-
-## What it does
-
-```text
-playlist URL  →  background download  →  720p merge  →  numbered files  →  ZIP archive
-```
-
-- **Playlist-first workflow** — process a full playlist from one URL.
-- **720p ceiling** — selects the best available video/audio streams up to 720p.
-- **MP4 or MKV** — choose a broadly compatible MP4 or a remux-friendly MKV container.
-- **Live progress** — see the active playlist item, percentage, and job log in the browser.
-- **Ordered output** — files are named `001 - Title.mp4`, `002 - Title.mp4`, and so on.
-- **One-click delivery** — the completed playlist is packed into a single downloadable ZIP.
-- **Local by default** — the Flask server and temporary job files stay on your machine.
-
-## Quick start
-
-### 1. Install prerequisites
-
-- Python **3.9 or newer**
-- [`ffmpeg`](https://ffmpeg.org/download.html) available on your system `PATH`
-
-### 2. Install YTPULSE
-
-```bash
-git clone https://github.com/<your-username>/playlist-pulse.git
-cd playlist-pulse
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\\Scripts\\activate
-python -m pip install -r requirements.txt
-```
-
-### 3. Launch the console
-
-```bash
-python app.py
-```
-
-Open **http://localhost:5000**, paste a playlist URL, select MP4 or MKV, and initiate the download.
-
-## Configuration at a glance
-
-| Setting | Current behavior |
-| --- | --- |
-| Video quality | Best available streams up to 720p |
-| Fragment concurrency | 8 parallel fragments |
-| Output naming | Zero-padded playlist index + title |
-| Archive format | ZIP with DEFLATE compression |
-| Server port | `5000` |
-| Error handling | Failed items are skipped; empty jobs fail clearly |
-
-## Project map
-
-```text
-.
-├── app.py                 # Flask routes, background jobs, yt-dlp, ZIP creation
-├── requirements.txt       # Python dependency pin/range
-├── templates/index.html   # YTPULSE interface
-└── static/
-    ├── script.js          # Start job, poll status, reveal archive download
-    └── style.css           # Neon terminal / scanline visual system
-```
-
-## API surface
-
-The browser uses four small endpoints:
-
-| Method | Endpoint | Purpose |
+| Option | Best for | What you need |
 | --- | --- | --- |
-| `GET` | `/` | Render the YTPULSE interface |
-| `POST` | `/start` | Start a playlist job with `url` and `container` (`mp4` or `mkv`) |
-| `GET` | `/status/<job_id>` | Return job state, percentage, and log lines |
-| `GET` | `/download/<job_id>` | Download the finished `playlist.zip` |
+| **Hosted website** | Everyday users | A browser and the hosted YTPULSE link |
+| **VS Code / local installation** | Developers and private local use | Git, Python, FFmpeg, and this repository |
 
-## Privacy and responsible use
+GitHub stores the source code. It does not run the Flask application by itself. A hosted deployment is required for a browser-only experience; otherwise, clone the repository and run it locally.
 
-YTPULSE is designed to run locally, but the underlying downloader still connects to YouTube to retrieve the content you request. **Use it only for videos you own, have permission to download, or are otherwise allowed to save.** Respect copyright, platform terms, and applicable law.
+## Features
 
-Temporary job data is written to the local `jobs/` directory and the completed archive is served back by the local Flask process. Do not expose the development server to the public internet without adding authentication, access controls, and a production deployment configuration.
+- Download a complete playlist through a browser interface
+- Select MP4 or MKV output
+- Choose the best available streams up to 720p
+- Fetch fragments concurrently for better throughput
+- Show live playlist progress and download logs
+- Preserve playlist order with names such as `001 - Video title.mp4`
+- Package completed videos into one ZIP archive
+- Run locally without sending job data to a third-party application server
 
-## Troubleshooting
+## Requirements
 
-### `ffmpeg` not found
+Install these tools before starting a local copy:
 
-Install ffmpeg for your operating system and confirm it is discoverable:
+- **Python 3.9 or newer**
+- **Git**
+- **FFmpeg** available on your system `PATH`
+- **Visual Studio Code** — optional, but recommended for editing and running the project
+
+### Install FFmpeg
+
+Verify an existing installation first:
 
 ```bash
 ffmpeg -version
 ```
 
-### The archive is empty
+If that command is not found, install FFmpeg using the instructions for your operating system:
 
-Check that the URL is a playlist URL, the playlist is accessible, and the requested videos can be downloaded in your region. YTPULSE skips individual download errors but reports an empty result as a failed job.
+- **Windows:** install it from the [official FFmpeg download page](https://ffmpeg.org/download.html), then add its `bin` directory to `PATH`.
+- **macOS with Homebrew:** `brew install ffmpeg`
+- **Ubuntu/Debian:** `sudo apt update && sudo apt install ffmpeg`
 
-### Large playlists run slowly
+## Install and run with VS Code
 
-That is expected: downloads use disk space before the final ZIP is assembled. Keep enough free space for the playlist’s extracted files plus the archive.
+### 1. Clone the repository
 
-## Roadmap ideas
+Open a terminal and run:
 
-- [ ] Add a configurable quality ceiling
-- [ ] Add cancel and cleanup controls for active jobs
-- [ ] Add a persistent job history view
-- [ ] Add optional authentication for LAN deployments
-- [ ] Add automated tests around job lifecycle and archive naming
+```bash
+git clone https://github.com/rajatayyabb/playlist-pulse.git
+cd playlist-pulse
+code .
+```
+
+If the `code` command is unavailable, open VS Code manually and choose **File → Open Folder**, then select the cloned `playlist-pulse` folder.
+
+### 2. Create a virtual environment
+
+A virtual environment keeps YTPULSE's Python packages separate from your other projects.
+
+**macOS/Linux:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+**Windows PowerShell:**
+
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+**Windows Command Prompt:**
+
+```bat
+py -m venv .venv
+.venv\Scripts\activate.bat
+```
+
+When activated, your terminal usually displays `(.venv)` at the beginning of the prompt.
+
+### 3. Install Python dependencies
+
+Run this from the project root:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+### 4. Start YTPULSE
+
+```bash
+python app.py
+```
+
+The application starts on port `5000`. Open this address in your browser:
+
+```text
+http://localhost:5000
+```
+
+Keep the terminal window open while using the application. Press `Ctrl+C` in that terminal to stop the server.
+
+## Use the application
+
+1. Copy a YouTube playlist URL that you are permitted to download.
+2. Paste it into the **TARGET INPUT** field.
+3. Select **MP4** for broad compatibility or **MKV** for a remux-friendly container.
+4. Click **INITIATE DOWNLOAD**.
+5. Watch the live progress log while the playlist is processed.
+6. When the progress reaches 100%, click **DOWNLOAD ARCHIVE (.zip)**.
+7. Extract the ZIP archive to access the numbered video files.
+
+Example output:
+
+```text
+001 - Introduction.mp4
+002 - Setup guide.mp4
+003 - Final walkthrough.mp4
+```
+
+## Project structure
+
+```text
+playlist-pulse/
+├── app.py                 # Flask server, routes, background jobs, and ZIP creation
+├── requirements.txt       # Python dependencies
+├── templates/
+│   └── index.html         # Main browser interface
+├── static/
+│   ├── script.js          # Start jobs, poll status, and reveal downloads
+│   └── style.css          # Neon terminal visual design
+├── LICENSE                # MIT license
+└── README.md              # This guide
+```
+
+## Troubleshooting
+
+### `python` or `python3` is not recognized
+
+Install Python from [python.org](https://www.python.org/downloads/) and enable the option to add Python to your system `PATH` during Windows installation. Restart VS Code after installing it.
+
+### `ffmpeg` is not recognized
+
+Run `ffmpeg -version`. If it fails, install FFmpeg and add its executable directory to `PATH`. Restart the terminal after changing `PATH`.
+
+### `ModuleNotFoundError: No module named ...`
+
+Activate the virtual environment, then reinstall the dependencies:
+
+```bash
+source .venv/bin/activate       # macOS/Linux
+python -m pip install -r requirements.txt
+```
+
+On Windows PowerShell, activate it with:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### Port 5000 is already in use
+
+Stop the other application using port 5000, or change the final line of `app.py` to another port and open the matching address in your browser.
+
+### The ZIP is empty or a playlist item fails
+
+Confirm that the URL is an accessible playlist URL and that the content is available in your region. Large playlists also require sufficient free disk space because videos are downloaded temporarily before the ZIP archive is created.
+
+## Privacy and responsible use
+
+When run locally, YTPULSE processes downloads on the computer where you started the Flask server. The application still connects to YouTube to retrieve requested content. Use it only for videos you own, have permission to download, or are otherwise legally allowed to save. Respect copyright, YouTube's terms, and applicable law.
+
+Do not expose a local development server directly to the public internet without adding authentication, access controls, and a production deployment configuration.
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make and test your changes locally.
+4. Open a pull request with a clear description of the change.
 
 ## License
 
-MIT — see [LICENSE](LICENSE) when added to the project.
-
----
-
-<div align="center">
-  <sub>Built for quiet archives, long playlists, and people who prefer a terminal glow.</sub>
-</div>
+YTPULSE is released under the MIT License. See [LICENSE](LICENSE) for the complete terms.
