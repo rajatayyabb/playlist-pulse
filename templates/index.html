@@ -10,19 +10,16 @@
 <body>
 <div class="scanlines"></div>
 <div class="grid-bg"></div>
-
 <div class="wrap">
   <header>
     <h1><span class="bracket">[</span>YTPULSE<span class="bracket">]</span></h1>
-    <p class="sub">// local playlist extraction unit :: 720p :: zipped output</p>
+    <p class="sub">// hosted playlist extraction unit :: 720p :: zipped output</p>
   </header>
-
   <div class="panel">
     <div class="panel-head">
       <span class="dot"></span> TARGET INPUT
     </div>
     <input id="url" type="text" placeholder="paste youtube playlist url...">
-
     <div class="row">
       <label class="radio">
         <input type="radio" name="fmt" value="mp4" checked>
@@ -33,10 +30,8 @@
         <span>MKV (no re-encode)</span>
       </label>
     </div>
-
     <button id="go" onclick="start()">► INITIATE DOWNLOAD</button>
   </div>
-
   <div class="panel" id="status-panel" style="display:none">
     <div class="panel-head"><span class="dot pulse"></span> SIGNAL LOG</div>
     <div class="bar-wrap"><div class="bar" id="bar"></div></div>
@@ -44,10 +39,8 @@
     <pre id="log"></pre>
     <a id="dl" class="dl-btn" style="display:none">⬇ DOWNLOAD ARCHIVE (.zip)</a>
   </div>
-
-  <footer>runs 100% locally on your machine · no data leaves your network</footer>
+  <footer>server-side processing · temporary job files · use only content you are allowed to download</footer>
 </div>
-
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -108,10 +108,10 @@ python -m pip install -r requirements.txt
 python app.py
 ```
 
-The application starts on port `5000`. Open this address in your browser:
+The application starts on port `3000` by default. Open this address in your browser:
 
 ```text
-http://localhost:5000
+http://localhost:3000
 ```
 
 Keep the terminal window open while using the application. Press `Ctrl+C` in that terminal to stop the server.
@@ -174,9 +174,9 @@ On Windows PowerShell, activate it with:
 .venv\Scripts\Activate.ps1
 ```
 
-### Port 5000 is already in use
+### Port 3000 is already in use
 
-Stop the other application using port 5000, or change the final line of `app.py` to another port and open the matching address in your browser.
+Stop the other application using port 3000, or change the final line of `app.py` to another port and open the matching address in your browser.
 
 ### The ZIP is empty or a playlist item fails
 
